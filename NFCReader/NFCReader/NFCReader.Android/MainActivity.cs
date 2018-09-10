@@ -24,8 +24,9 @@ namespace NFCReader.Droid
             global::Xamarin.Forms.Forms.Init(this, bundle);
             NfcManager NfcManager = (NfcManager)Android.App.Application.Context.GetSystemService(Context.NfcService);
             _NfcAdapter = NfcManager.DefaultAdapter;
-            _nfcScannerService = (NfcScannerService) ((NFCReader.App)Xamarin.Forms.Application.Current).Container.Resolve(typeof(INfcScannerService));
-
+           // var container = ((NFCReader.App) Xamarin.Forms.Application.Current).Container;
+           // _nfcScannerService = (NfcScannerService) container.Resolve(typeof(INfcScannerService));
+           _nfcScannerService = Xamarin.Forms.DependencyService.Get<INfcScannerService>() as NfcScannerService;
             LoadApplication(new App(new AndroidInitializer()));
         }
 
@@ -45,6 +46,7 @@ namespace NFCReader.Droid
                         },
                         new string[] {
                             NFCTechs.MifareClassic,
+
                         },
                     }
                 );

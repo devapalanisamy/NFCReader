@@ -19,21 +19,23 @@ namespace NFCReader.ViewModels
             : base(navigationService)
         {
             Title = "Main Page";
-            _nfcScannerService = nfcScannerService;
+            _nfcScannerService = Xamarin.Forms.DependencyService.Get<INfcScannerService>();
             _pageDialogService = dialogService;
             _nfcScannerService.NewTag += HandleNewTag;
             _nfcScannerService.TagConnected += OnTagConnected;
             _nfcScannerService.TagDisconnected += OnTagDisconnected;
         }
 
-        private void OnTagDisconnected(object sender, NfcTag e)
+        private async void OnTagDisconnected(object sender, NfcTag e)
         {
-            
+            var text = readNDEFMEssage(e.NdefMessage);
+            await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
-        private void OnTagConnected(object sender, NfcTag e)
+        private async void OnTagConnected(object sender, NfcTag e)
         {
-            
+            var text = readNDEFMEssage(e.NdefMessage);
+            await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
         private async void HandleNewTag(object sender, NfcTag e)
