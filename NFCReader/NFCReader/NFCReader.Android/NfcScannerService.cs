@@ -235,29 +235,11 @@ namespace NFCReader.Droid
 
             foreach (NdefRecord record in message)
             {
-                // Go through each record, check if it's a Smart Poster
-                if (record.CheckSpecializedType(false) == typeof(NdefSpRecord))
-                {
-                    // Convert and extract Smart Poster info
-                    var spRecord = new NdefSpRecord(record);
-                    collection.Add("URI: " + spRecord.Uri);
-                    collection.Add("Titles: " + spRecord.TitleCount());
-                    collection.Add("1. Title: " + spRecord.Titles[0].Text);
-                    collection.Add("Action set: " + spRecord.ActionInUse());
-                }
-
-                if (record.CheckSpecializedType(false) == typeof(NdefUriRecord))
-                {
-                    // Convert and extract Smart Poster info
-                    var spRecord = new NdefUriRecord(record);
-                    collection.Add("Text: " + spRecord.Uri);
-                }
-
                 if (record.CheckSpecializedType(false) == typeof(NdefTextRecord))
                 {
-                    // Convert and extract Smart Poster info
-                    var spRecord = new NdefTextRecord(record);
-                    collection.Add("Plain Text: " + spRecord.Text);
+
+                    var textRecord = new NdefTextRecord(record);
+                    collection.Add("Plain Text: " + textRecord.Text);
                 }
             }
             return collection;
