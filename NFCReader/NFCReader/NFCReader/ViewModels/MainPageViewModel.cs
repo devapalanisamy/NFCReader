@@ -28,52 +28,22 @@ namespace NFCReader.ViewModels
 
         private async void OnTagDisconnected(object sender, NfcTag e)
         {
-            var text = readNDEFMEssage(e.NdefMessage);
+            var text = _nfcScannerService.ReadNdefMessage(e.NdefMessage);
             await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
         private async void OnTagConnected(object sender, NfcTag e)
         {
-            var text = readNDEFMEssage(e.NdefMessage);
+            var text = _nfcScannerService.ReadNdefMessage(e.NdefMessage);
             await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
         private async void HandleNewTag(object sender, NfcTag e)
         {
-            var text = readNDEFMEssage(e.NdefMessage);
+            var text = _nfcScannerService.ReadNdefMessage(e.NdefMessage);
            await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
-        private ObservableCollection<string> readNDEFMEssage(NdefMessage message)
-        {
-            ObservableCollection<string> collection = new ObservableCollection<string>();
 
-            if (message == null)
-            {
-                return collection;
-            }
-
-            foreach (NdefRecord record in message)
-            {
-                // Go through each record, check if it's a Smart Poster
-                if (record.CheckSpecializedType(false) == typeof(NdefSpRecord))
-                {
-                    // Convert and extract Smart Poster info
-                    var spRecord = new NdefSpRecord(record);
-                    collection.Add("URI: " + spRecord.Uri);
-                    collection.Add("Titles: " + spRecord.TitleCount());
-                    collection.Add("1. Title: " + spRecord.Titles[0].Text);
-                    collection.Add("Action set: " + spRecord.ActionInUse());
-                }
-
-                if (record.CheckSpecializedType(false) == typeof(NdefUriRecord))
-                {
-                    // Convert and extract Smart Poster info
-                    var spRecord = new NdefUriRecord(record);
-                    collection.Add("Text: " + spRecord.Uri);
-                }
-            }
-            return collection;
-        }
     }
 }

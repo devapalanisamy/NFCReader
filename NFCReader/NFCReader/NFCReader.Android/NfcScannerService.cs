@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Android.Content;
 using Android.Nfc;
 using Android.Nfc.Tech;
+using NdefLibrary.Ndef;
 using NFCReader.Droid;
+using NdefMessage = NdefLibrary.Ndef.NdefMessage;
+using NdefRecord = NdefLibrary.Ndef.NdefRecord;
 
 [assembly: Xamarin.Forms.Dependency(typeof(NfcScannerService))]
 namespace NFCReader.Droid
@@ -220,6 +224,44 @@ namespace NFCReader.Droid
                 }
             }
 
-            #endregion
+        public ObservableCollection<string> ReadNdefMessage(NdefMessage message)
+        {
+            ObservableCollection<string> collection = new ObservableCollection<string>();
+
+            if (message == null)
+            {
+                return collection;
+            }
+
+            foreach (NdefRecord record in message)
+            {
+                // Go through each record, check if it's a Smart Poster
+                if (record.CheckSpecializedType(false) == typeof(NdefSpRecord))
+                {
+                    // Convert and extract Smart Poster info
+                    var spRecord = new NdefSpRecord(record);
+                    collection.Add("URI: " + spRecord.Uri);
+                    collection.Add("Titles: " + spRecord.TitleCount());
+                    collection.Add("1. Title: " + spRecord.Titles[0].Text);
+                    collection.Add("Action set: " + spRecord.ActionInUse());
+                }
+
+                if (record.CheckSpecializedType(false) == typeof(NdefUriRecord))
+                {
+                    // Convert and extract Smart Poster info
+                    var spRecord = new NdefUriRecord(record);
+                    collection.Add("Text: " + spRecord.Uri);
+                }
+
+                if (record.CheckSpecializedType(false) == typeof(NdefTextRecord))
+                {
+                    // Convert and extract Smart Poster info
+                    var spRecord = new NdefTextRecord(record);
+                    collection.Add("Plain Text: " + spRecord.Text);
+                }
+            }
+            return collection;
+        }
+        #endregion
     }
 }
