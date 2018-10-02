@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using NdefLibrary.Ndef;
 using Prism.Services;
+using Xamarin.Forms;
 
 namespace NFCReader.ViewModels
 {
@@ -15,7 +16,7 @@ namespace NFCReader.ViewModels
     {
         private readonly INfcScannerService _nfcScannerService;
         private readonly IPageDialogService _pageDialogService;
-        public MainPageViewModel(INavigationService navigationService, INfcScannerService nfcScannerService, IPageDialogService dialogService)
+        public MainPageViewModel(INavigationService navigationService, IPageDialogService dialogService)
             : base(navigationService)
         {
             Title = "Main Page";
@@ -45,5 +46,23 @@ namespace NFCReader.ViewModels
         }
 
 
+        private DelegateCommand<ItemTappedEventArgs> _scanCommand;
+
+        public DelegateCommand<ItemTappedEventArgs> ScanCommand
+        {
+            get
+            {
+                if (_scanCommand == null)
+                {
+                    _scanCommand = new DelegateCommand<ItemTappedEventArgs>(ScanNfc);
+                }
+                return _scanCommand;
+            }
+        }
+
+        private async void ScanNfc(ItemTappedEventArgs obj)
+        {
+            await _nfcScannerService.ScanAsync();
+        }
     }
 }

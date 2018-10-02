@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using NdefLibrary.Ndef;
 
 namespace NFCReader
@@ -13,5 +14,6 @@ namespace NFCReader
         event EventHandler<NfcTag> TagConnected;
         event EventHandler<NfcTag> TagDisconnected;
         ObservableCollection<string> ReadNdefMessage(NdefMessage message);
+        Task ScanAsync();
     }
 }

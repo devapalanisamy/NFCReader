@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using Android.Content;
 using Android.Nfc;
 using Android.Nfc.Tech;
@@ -244,6 +245,12 @@ namespace NFCReader.Droid
             }
             return collection;
         }
+
+        public Task ScanAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }
