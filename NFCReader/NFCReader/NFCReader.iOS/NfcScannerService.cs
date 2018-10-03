@@ -22,12 +22,17 @@ namespace NFCReader.iOS
             throw new NotImplementedException();
         }
 
-        public event EventHandler<NfcTag> NewTag;
+        public event EventHandler<string> NewTag;
         public event EventHandler<NfcTag> TagConnected;
         public event EventHandler<NfcTag> TagDisconnected;
         public ObservableCollection<string> ReadNdefMessage(NdefMessage message)
         {
             throw new NotImplementedException();
+        }
+
+        public NfcScannerService()
+        {
+            _nfcTag = new NfcTag();
         }
 
         public void DidInvalidate(NFCNdefReaderSession session, NSError error)
@@ -47,7 +52,7 @@ namespace NFCReader.iOS
             {
                 
             }
-            RaiseNewTag(_nfcTag);
+            RaiseNewTag(null);
         }
 
         public IntPtr Handle { get; }
@@ -56,7 +61,7 @@ namespace NFCReader.iOS
             throw new NotImplementedException();
         }
 
-        public void RaiseNewTag(NfcTag tag)
+        public void RaiseNewTag(string tag)
         {
             if (NewTag != null)
             {
@@ -71,6 +76,9 @@ namespace NFCReader.iOS
         {
             var reader = new NfcReader();
             var message = await reader.ScanAsync();
+            //var nfcTag = new NfcTag();
+            //nfcTag.NdefMessage = NdefMessage.FromByteArray(Encoding.ASCII.GetBytes(message));
+            RaiseNewTag(message);
         }
 
         //private NdefLibrary.Ndef.NdefMessage ReadNdef(Ndef ndef)
@@ -91,7 +99,12 @@ namespace NFCReader.iOS
     {
         private NFCNdefReaderSession _session;
         private TaskCompletionSource<string> _tcs;
+        private NfcTag _nfcTag;
 
+        public NfcReader()
+        {
+            _nfcTag = new NfcTag();
+        }
         public Task<string> ScanAsync()
         {
             if (!NFCNdefReaderSession.ReadingAvailable)

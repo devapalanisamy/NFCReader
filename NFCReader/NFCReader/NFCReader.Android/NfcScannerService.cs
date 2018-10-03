@@ -98,7 +98,7 @@ namespace NFCReader.Droid
                         _nfcTag.MaxSize = ndef.MaxSize;
                     }
 
-                    RaiseNewTag(_nfcTag);
+                    RaiseNewTag(ReadNdefMessage(_nfcTag.NdefMessage)[0]);
                 }
             }
 
@@ -110,7 +110,6 @@ namespace NFCReader.Droid
                 }
 
                 Ndef ndef = GetNdef(_droidTag);
-
                 if (ndef == null)
                 {
                     throw new Exception("Tag Error: NDEF not supported");
@@ -215,9 +214,9 @@ namespace NFCReader.Droid
             }
 
 
-            public event EventHandler<NfcTag> NewTag;
+            public event EventHandler<string> NewTag;
 
-            public void RaiseNewTag(NfcTag tag)
+            public void RaiseNewTag(string tag)
             {
                 if (NewTag != null)
                 {
@@ -240,7 +239,7 @@ namespace NFCReader.Droid
                 {
 
                     var textRecord = new NdefTextRecord(record);
-                    collection.Add("Plain Text: " + textRecord.Text);
+                    collection.Add(textRecord.Text);
                 }
             }
             return collection;
@@ -248,7 +247,7 @@ namespace NFCReader.Droid
 
         public Task ScanAsync()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         #endregion

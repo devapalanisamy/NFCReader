@@ -10,7 +10,7 @@ namespace NFCReader
 
         bool IsAvailable { get; }
         void WriteTag(NdefMessage message);
-        event EventHandler<NfcTag> NewTag;
+        event EventHandler<string> NewTag;
         event EventHandler<NfcTag> TagConnected;
         event EventHandler<NfcTag> TagDisconnected;
         ObservableCollection<string> ReadNdefMessage(NdefMessage message);

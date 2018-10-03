@@ -39,10 +39,10 @@ namespace NFCReader.ViewModels
             await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
         }
 
-        private async void HandleNewTag(object sender, NfcTag e)
+        private async void HandleNewTag(object sender, string e)
         {
-            var text = _nfcScannerService.ReadNdefMessage(e.NdefMessage);
-           await _pageDialogService.DisplayAlertAsync("Tag Content", text[0], null, "ok");
+           // var text = _nfcScannerService.ReadNdefMessage(e.NdefMessage);
+           await _pageDialogService.DisplayAlertAsync("Tag Content", e, null, "ok");
         }
 
 
@@ -62,7 +62,10 @@ namespace NFCReader.ViewModels
 
         private async void ScanNfc(ItemTappedEventArgs obj)
         {
-            await _nfcScannerService.ScanAsync();
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+                await _nfcScannerService.ScanAsync();
+            }
         }
     }
 }
