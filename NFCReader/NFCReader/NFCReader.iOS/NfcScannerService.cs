@@ -13,7 +13,7 @@ using NFCReader.iOS;
 [assembly: Xamarin.Forms.Dependency(typeof(NfcScannerService))]
 namespace NFCReader.iOS
 {
-    public class NfcScannerService : NSObject, INfcScannerService, INFCNdefReaderSessionDelegate
+    public class NfcScannerService : NSObject, INfcScannerService
     {
         public bool IsAvailable { get; }
         private NfcTag _nfcTag;
@@ -35,38 +35,9 @@ namespace NFCReader.iOS
             _nfcTag = new NfcTag();
         }
 
-        public void DidInvalidate(NFCNdefReaderSession session, NSError error)
-        {
-            var readerError = (NFCReaderError)(long)error.Code;
-            if (readerError != NFCReaderError.ReaderSessionInvalidationErrorFirstNDEFTagRead &&
-                readerError != NFCReaderError.ReaderSessionInvalidationErrorUserCanceled)
-            {
-                // some error handling
-            }
-        }
-
-        public void DidDetect(NFCNdefReaderSession session, NFCNdefMessage[] messages)
-        {
-            _nfcTag.TechList = new List<string>();
-            foreach (NFCNdefMessage msg in messages)
-            {
-                
-            }
-            RaiseNewTag(null);
-        }
-
-        public IntPtr Handle { get; }
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
         public void RaiseNewTag(string tag)
         {
-            if (NewTag != null)
-            {
-                NewTag(this, tag);
-            }
+            NewTag?.Invoke(this, tag);
         }
 
         private NFCNdefReaderSession _session;
@@ -76,23 +47,8 @@ namespace NFCReader.iOS
         {
             var reader = new NfcReader();
             var message = await reader.ScanAsync();
-            //var nfcTag = new NfcTag();
-            //nfcTag.NdefMessage = NdefMessage.FromByteArray(Encoding.ASCII.GetBytes(message));
             RaiseNewTag(message);
         }
-
-        //private NdefLibrary.Ndef.NdefMessage ReadNdef(Ndef ndef)
-        //{
-        //    if (ndef?.CachedNdefMessage == null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var bytes = ndef.CachedNdefMessage.ToByteArray();
-        //    var message = NdefLibrary.Ndef.NdefMessage.FromByteArray(bytes);
-
-        //    return message;
-        //}
     }
 
     public class NfcReader : NSObject, INFCNdefReaderSessionDelegate
